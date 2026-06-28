@@ -41,10 +41,11 @@ def generate_gemini(messages):
         word in last_prompt
         for word in web_keywords
     )
+    try :
 
-    if use_web:
+        if use_web:
 
-        try:
+        
           response = client.models.generate_content(
              model="gemini-2.5-flash",
              contents=history,
@@ -52,18 +53,19 @@ def generate_gemini(messages):
                tools=[
                  types.Tool(
                     google_search=types.GoogleSearch()
-                )
+                 )
                ],
-            response_modalities=["TEXT"],
-           ),
+               response_modalities=["TEXT"],
+             ),
         )
-        except Exception as e:
-           return f"Gemini Error:\n{repr(e)}"
-    else:
+        
+        else:
 
-        response = client.models.generate_content(
+           response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=history,
-        )
+           )
 
-    return response.text
+        return response.text
+    except Exception as e:
+           return f"Gemini Error:\n{repr(e)}"
