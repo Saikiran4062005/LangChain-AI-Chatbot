@@ -132,6 +132,31 @@ with st.sidebar:
             st.session_state.pdf_pages = None
             st.rerun()
 
+    st.divider()# ------------------------
+# PDF MODE
+# ------------------------
+
+mode = "General AI"
+
+if st.session_state.vector_db is not None:
+
+    if st.button(
+        "🗑 Remove PDF",
+        use_container_width=True,
+    ):
+        st.session_state.vector_db = None
+        st.session_state.pdf_pages = None
+        st.rerun()
+
+    mode = st.radio(
+        "Choose Mode",
+        [
+            "General AI",
+            "Chat with PDF",
+        ],
+        index=0,
+    )
+
     st.divider()
 
     st.markdown("### Capabilities")
@@ -406,19 +431,28 @@ Answer:
         # Streaming Response
         # =====================================================
 
-        stream = ""
+        with st.spinner("🤖 Lyca AI is thinking..."):
 
-        for word in answer.split():
+            if (
+                mode == "Chat with PDF"
+                and st.session_state.vector_db is not None
+                and is_pdf_query
+            ):
+              answer = generate_answer(
+              [
+                {
+                    "role": "user",
+                    "content": pdf_prompt,
+                }
+            ],
+            system_prompt=PDF_SYSTEM_PROMPT,
+        )
+            else:
+               answer = generate_gemini(
+            st.session_state.messages
+        )
 
-            stream += word + " "
-
-            placeholder.markdown(
-                stream + "▌"
-            )
-
-            time.sleep(0.003)
-
-        placeholder.markdown(stream)
+        st.markdown(answer)
     # =====================================================
     # SAVE ASSISTANT MESSAGE
     # =====================================================
