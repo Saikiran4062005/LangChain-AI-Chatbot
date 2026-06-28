@@ -452,7 +452,19 @@ Answer:
             st.session_state.messages
         )
 
-        st.markdown(answer)
+        stream = ""
+
+        lines = answer.split("\n")
+
+        for line in lines:
+
+            stream += line + "\n"
+
+            placeholder.markdown(stream + "▌")
+
+            time.sleep(0.05)
+
+        placeholder.markdown(answer)
     # =====================================================
     # SAVE ASSISTANT MESSAGE
     # =====================================================
