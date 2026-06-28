@@ -10,6 +10,7 @@ client = genai.Client(
 )
 
 def generate_gemini(messages):
+    messages = messages[-10:]
 
     history = ""
 
@@ -20,14 +21,7 @@ def generate_gemini(messages):
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=history,
-        config=types.GenerateContentConfig(
-            tools=[
-                types.Tool(
-                    google_search=types.GoogleSearch()
-                )
-            ],
-            response_modalities=["TEXT"],
-        ),
+        
     )
 
     return response.text
