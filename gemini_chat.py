@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from chatbot import generate_answer
 
 load_dotenv()
 
@@ -68,4 +69,31 @@ def generate_gemini(messages):
 
         return response.text
     except Exception as e:
-           return f"Gemini Error:\n{repr(e)}"
+
+     error = str(e)
+
+    if (
+        "429" in error
+        or "RESOURCE_EXHAUSTED" in error
+    ):
+
+        fallback_messages = []
+
+        for msg in messages:
+
+            fallback_messages.append(
+                {
+                    "role": msg["role"],
+                    "content": msg["content"],
+                }
+            )
+
+        answer = generate_answer(fallback_messages)
+
+        return (
+            "⚠️ Gemini is temporarily busy.\n\n"
+            "🔄 Switched to Groq.\n\n"
+            + answer
+        )
+
+    return f"Gemini Error:\n{error}"
