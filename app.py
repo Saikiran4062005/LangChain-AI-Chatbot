@@ -1,12 +1,3 @@
-import os
-import streamlit as st
-
-key = os.getenv("GEMINI_API_KEY")
-
-st.write("Gemini key loaded:", key is not None)
-
-if key:
-    st.write("Key prefix:", key[:10])
 import streamlit as st
 import tempfile
 import time
